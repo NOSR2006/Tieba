@@ -1,11 +1,9 @@
-# 每天6:30执行
-# UTC 时间，北京时间需要 UTC+8
 name: Start
 
 on:
    workflow_dispatch:
    schedule:
-       - cron: '10 0 * * *'
+       - cron: '50 1 * * *'
 
 jobs:
   TiebaSignIn:
