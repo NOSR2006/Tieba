@@ -146,7 +146,8 @@ public class Run {
             String token = sckey;
             String title = URLEncoder.encode("Tieba", "UTF-8");
             String content = URLEncoder.encode(desp, "UTF-8");
-            String urlx = "https://api.day.app/" + token + "/" + title + "/" + content + "?icon=";
+            String icon = "icon/Tieba.png"
+            String urlx = "https://api.day.app/" + token + "/" + title + "/" + content + "?icon=" + icon;
             URL url = new URL(urlx);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
