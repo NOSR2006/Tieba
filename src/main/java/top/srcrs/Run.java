@@ -22,64 +22,31 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 程序运行开始的地方
- *
- * @author srcrs
- * @Time 2020-10-31
- */
 public class Run {
-    /**
-     * 获取日志记录器对象
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(Run.class);
 
-    /**
-     * 获取用户所有关注贴吧
-     */
     String LIKE_URL = "https://tieba.baidu.com/mo/q/newmoindex";
-    /**
-     * 获取用户的tbs
-     */
+
     String TBS_URL = "http://tieba.baidu.com/dc/common/tbs";
-    /**
-     * 贴吧签到接口
-     */
+
     String SIGN_URL = "http://c.tieba.baidu.com/c/c/forum/sign";
 
-    /**
-     * 存储用户所关注的贴吧
-     */
     private List<String> follow = new ArrayList<>();
-    /**
-     * 签到成功的贴吧列表
-     */
+
     private static List<String> success = new ArrayList<>();
 
-    /**
-     * 签到失败的贴吧列表
-     */
     private static HashSet<String> failed = new HashSet<String>();
 
-    /**
-     * 失效的贴吧列表
-     */
     private static List<String> invalid = new ArrayList<>();
 
-    /**
-     * 用户的tbs
-     */
     private String tbs = "";
-    /**
-     * 用户所关注的贴吧数量
-     */
+
     private static Integer followNum = 201;
 
     public static void main(String[] args) {
         Cookie cookie = Cookie.getInstance();
-        // 存入Cookie，以备使用
         if (args.length == 0) {
-            LOGGER.warn("请在Secrets中填写BDUSS");
+            LOGGER.warn("请在Secrets中添加BDUSS");
         }
         cookie.setBDUSS(args[0]);
         Run run = new Run();
@@ -93,52 +60,36 @@ public class Run {
         }
     }
 
-    /**
-     * 进行登录，获得 tbs ，签到的时候需要用到这个参数
-     *
-     * @author srcrs
-     * @Time 2020-10-31
-     */
     public void getTbs() {
         try {
             JSONObject jsonObject = Request.get(TBS_URL);
             if ("1".equals(jsonObject.getString("is_login"))) {
-                LOGGER.info("获取tbs成功");
+                LOGGER.info("获取TBS成功");
                 tbs = jsonObject.getString("tbs");
             } else {
-                LOGGER.warn("获取tbs失败 -- " + jsonObject);
+                LOGGER.warn("获取TBS失败 -- " + jsonObject);
             }
         } catch (Exception e) {
-            LOGGER.error("获取tbs部分出现错误 -- " + e);
+            LOGGER.error("获取TBS部分出现错误 -- " + e);
         }
     }
 
-    /**
-     * 获取用户所关注的贴吧列表
-     *
-     * @author srcrs
-     * @Time 2020-10-31
-     */
     public void getFollow() {
         try {
             JSONObject jsonObject = Request.get(LIKE_URL);
             LOGGER.info("获取贴吧列表成功");
             JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("like_forum");
             followNum = jsonArray.size();
-            // 获取用户所有关注的贴吧
             for (Object array : jsonArray) {
                 String tiebaName = ((JSONObject) array).getString("forum_name");
                 if ("0".equals(((JSONObject) array).getString("is_sign"))) {
-                    // 将为签到的贴吧加入到 follow 中，待签到
                     follow.add(tiebaName.replace("+", "%2B"));
-                    // 过滤失效的贴吧
                     if (Request.isTiebaNotExist(tiebaName)) {
                         follow.remove(tiebaName);
                         invalid.add(tiebaName);
                         failed.add(tiebaName);
                     }
                 } else {
-                    // 将已经成功签到的贴吧，加入到 success
                     success.add(tiebaName);
                 }
             }
@@ -148,7 +99,6 @@ public class Run {
     }
 
     public void runSign() {
-        // 当执行 5 轮所有贴吧还未签到成功就结束操作
         Integer flag = 5;
         try {
             while (success.size() < followNum && flag > 0) {
@@ -175,12 +125,7 @@ public class Run {
                     }
                 }
                 if (success.size() != followNum - invalid.size()) {
-                    // 为防止短时间内多次请求接口，触发风控，设置每一轮签到完等待 5 分钟
                     Thread.sleep(1000 * 60 * 5);
-                    /**
-                     * 重新获取 tbs
-                     * 尝试解决以前第 1 次签到失败，剩余 4 次循环都会失败的错误。
-                     */
                     getTbs();
                 }
                 flag--;
@@ -190,15 +135,14 @@ public class Run {
         }
     }
 
-     public void send(String sckey) {
-        /** 将要推送的数据 */
-        String text = "\n总共关注" + followNum + "个吧\n";
-        text += "\n成功签到" + success.size() + "个吧\n" + "\n签到失败" + (followNum - success.size()) + "个吧\n";
-        String desp = "\n总共关注" + followNum + "个吧\n";
-        desp += "\n成功签到" + success.size() + "个吧\n" + "\n签到失败" + (followNum - success.size()) + "个吧\n";
-        String body = "text=" + text + "&desp=" + "TiebaSignIn运行结果\n\n" + desp;
+    public void send(String sckey) {
+        String text = "总共关注" + followNum + "个吧\n";
+        text += "成功签到" + success.size() + "个吧\n" + "签到失败" + (followNum - success.size()) + "个吧";
+        String desp = "总共关注" + followNum + "个吧\n";
+        desp += "成功签到" + success.size() + "个吧\n" + "签到失败" + (followNum - success.size()) + "个吧";
+        String body = "text=" + text + "&desp=" + "TiebaSignIn运行结果" + desp;
 
-try {
+            try {
             String token = sckey;
             String title = URLEncoder.encode("Tieba", "UTF-8");
             String content = URLEncoder.encode(desp, "UTF-8");
