@@ -137,9 +137,9 @@ public class Run {
 
     public void send(String sckey) {
         String text = "总共关注" + followNum + "个吧\n";
-        text += "成功签到" + success.size() + "个吧\n" + "签到失败" + (followNum - success.size()) + "个吧";
+        text += "成功签到" + success.size() + "个吧\n" + "签到失败" + String.format("%02d", (followNum - success.size())) + "个吧";
         String desp = "总共关注" + followNum + "个吧\n";
-        desp += "成功签到" + success.size() + "个吧\n" + "签到失败" + (followNum - success.size()) + "个吧";
+        desp += "成功签到" + success.size() + "个吧\n" + "签到失败" + String.format("%02d", (followNum - success.size())) + "个吧";
         String body = "text=" + text + "&desp=" + "TiebaSignIn运行结果" + desp;
 
             try {
