@@ -147,13 +147,6 @@ public class Run {
         }
     }
 
-    /**
-     * 开始进行签到，每一轮性将所有未签到的贴吧进行签到，一共进行5轮，如果还未签到完就立即结束
-     * 一般一次只会有少数的贴吧未能完成签到，为了减少接口访问次数，每一轮签到完等待1分钟，如果在过程中所有贴吧签到完则结束。
-     *
-     * @author srcrs
-     * @Time 2020-10-31
-     */
     public void runSign() {
         // 当执行 5 轮所有贴吧还未签到成功就结束操作
         Integer flag = 5;
@@ -197,62 +190,19 @@ public class Run {
         }
     }
 
-    /**
-     * 发送运行结果到微信，通过 server 酱
-     *
-     * @param sckey
-     * @author srcrs
-     * @Time 2020-10-31
-     */
-    /**   public void send(String sckey) {
-       
-        String text = "总: " + followNum + " - ";
-        text += "成功: " + success.size() + " 失败: " + (followNum - success.size());
-        String desp = "共 " + followNum + " 贴吧\n\n";
-        desp += "成功: " + success.size() + " 失败: " + (followNum - success.size());
-        String body = "text=" + text + "&desp=" + "TiebaSignIn运行结果\n\n" + desp;
-        StringEntity entityBody = new StringEntity(body, "UTF-8");
-        HttpClient client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("https://sc.ftqq.com/" + sckey + ".send");
-        httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        httpPost.setEntity(entityBody);
-        HttpResponse resp = null;
-        String respContent = null;
-        try {
-            resp = client.execute(httpPost);
-            HttpEntity entity = null;
-            if (resp.getStatusLine().getStatusCode() < 400) {
-                entity = resp.getEntity();
-            } else {
-                entity = resp.getEntity();
-            }
-            respContent = EntityUtils.toString(entity, "UTF-8");
-            LOGGER.info("server酱推送正常");
-        } catch (Exception e) {
-            LOGGER.error("server酱发送失败 -- " + e);
-        }
-    } 
-**/
-      /**
-     * 发送运行结果到微信，通过 PUSHPLUS
-     *
-     * @param sckey
-     * @author srcrs
-     * @Time 2020-10-31
-     */
      public void send(String sckey) {
         /** 将要推送的数据 */
-        String text = "总: " + followNum + " - ";
-        text += "成功: " + success.size() + " 失败: " + (followNum - success.size());
-        String desp = "共 " + followNum + " 贴吧\n\n";
-        desp += "成功: " + success.size() + " 失败: " + (followNum - success.size());
+        String text = "\n总共关注" + followNum + "个吧\n";
+        text += "\n成功签到" + success.size() + "个吧\n" + "\n签到失败" + (followNum - success.size()) + "个吧\n";
+        String desp = "\n总共关注" + followNum + "个吧\n";
+        desp += "\n成功签到" + success.size() + "个吧\n" + "\n签到失败" + (followNum - success.size()) + "个吧\n";
         String body = "text=" + text + "&desp=" + "TiebaSignIn运行结果\n\n" + desp;
 
 try {
             String token = sckey;
-            String title = URLEncoder.encode("百度贴吧自动签到", "UTF-8");
+            String title = URLEncoder.encode("Tieba", "UTF-8");
             String content = URLEncoder.encode(desp, "UTF-8");
-            String urlx = "https://api.day.app/" + token + "/" + title + "/" + content;
+            String urlx = "https://api.day.app/" + token + "/" + title + "/" + content + "?icon=https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/script/tieba/tieba.png";
             URL url = new URL(urlx);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
