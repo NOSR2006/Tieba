@@ -1,2 +1,2 @@
 Tieba
-NOSR
+NOSR!
