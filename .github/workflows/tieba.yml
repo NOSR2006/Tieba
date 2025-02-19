@@ -1,9 +1,9 @@
-name: Daily Tieba Sign-In
+name: Start
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "10 1 * * *" # 北京时间 6:30 (UTC+8)
+    - cron: "10 1 * * *"
 
 jobs:
   signin:
@@ -18,7 +18,7 @@ jobs:
         with:
           distribution: "zulu"
           java-version: "8"
-          cache: "maven" # 使用官方推荐的 Maven 依赖缓存
+          cache: "maven"
 
       - name: Build and execute
         env:

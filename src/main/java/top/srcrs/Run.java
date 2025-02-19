@@ -1,5 +1,4 @@
 package top.srcrs;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
@@ -24,25 +23,15 @@ import java.util.concurrent.TimeUnit;
 
 public class Run {
     private static final Logger LOGGER = LoggerFactory.getLogger(Run.class);
-
     String LIKE_URL = "https://tieba.baidu.com/mo/q/newmoindex";
-
     String TBS_URL = "http://tieba.baidu.com/dc/common/tbs";
-
     String SIGN_URL = "http://c.tieba.baidu.com/c/c/forum/sign";
-
     private List<String> follow = new ArrayList<>();
-
     private static List<String> success = new ArrayList<>();
-
     private static HashSet<String> failed = new HashSet<String>();
-
     private static List<String> invalid = new ArrayList<>();
-
     private String tbs = "";
-
     private static Integer followNum = 201;
-
     public static void main(String[] args) {
         Cookie cookie = Cookie.getInstance();
         if (args.length == 0) {
@@ -141,8 +130,7 @@ public class Run {
         String desp = "总共关注" + followNum + "个吧\n";
         desp += "成功签到" + success.size() + "个吧\n" + "签到失败" + String.format("%02d", (followNum - success.size())) + "个吧";
         String body = "text=" + text + "&desp=" + "TiebaSignIn运行结果" + desp;
-
-            try {
+        try {
             String token = sckey;
             String title = URLEncoder.encode("Tieba", "UTF-8");
             String content = URLEncoder.encode(desp, "UTF-8");
@@ -151,19 +139,15 @@ public class Run {
             URL url = new URL(urlx);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String line;
             StringBuilder response = new StringBuilder();
-
             while ((line = reader.readLine()) != null) {
                 response.append(line);
             }
             reader.close();
-
             System.out.println("Response: " + response.toString());
             connection.disconnect();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
