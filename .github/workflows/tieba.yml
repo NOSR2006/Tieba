@@ -3,7 +3,7 @@ name: Start
 on:
   workflow_dispatch:
   schedule:
-    - cron: "15 17 * * *"
+    - cron: "03 16 * * *"
 
 jobs:
   signin:
