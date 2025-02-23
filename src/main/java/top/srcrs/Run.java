@@ -135,7 +135,7 @@ public class Run {
             String title = URLEncoder.encode("Tieba", "UTF-8");
             String content = URLEncoder.encode(desp, "UTF-8");
             String icon = "https://raw.githubusercontent.com/NOSR2006/Tieba/refs/heads/master/icon/Tieba.png";
-            String urlx = "https://api.day.app/" + token + "/" + title + "/" + content + "?icon=" + icon;
+            String urlx = "https://api.day.app/" + token + "/" + title + "/" + content + "?icon=" + icon + "/URL Test?url=com.baidu.tieba://";
             URL url = new URL(urlx);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
