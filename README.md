@@ -1,1 +1,1 @@
-Tieba
+NOSR's Tieba Setin
